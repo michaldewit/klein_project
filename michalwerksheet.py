@@ -1,5 +1,5 @@
 import pandas as pd
-
+import math
 dtf = pd.read_csv(r"C:\Users\arie\academy\projectmetsuus\uitslagen.csv", sep=";")
 # print(dtf)
 #print(dtf.columns)
@@ -47,12 +47,12 @@ def regio_codes(partij): #dataframe maken waarbij regiocode en partij uit input 
 # 2.  print top 3 partijen met aantal stemmen per gemeente. begin met 1 gemeente, veralgemeniseer
 #beginnen met een functie die op row basis itereert
 
-def gemeente_top_3(gemeente):
+def gemeente_top(gemeente,nummer):
     gemeente_top_3 = dtf[dtf['RegioNaam'] == gemeente]
     gemeente_dtf = gemeente_top_3.iloc[:,10:46]
     gemeente_series = gemeente_dtf.squeeze()
     n_string = '\n'
-    print(f'dit zijn de grootste 3 partijen in {gemeente} van groot naar klein:{n_string}R{gemeente_series.sort_values(ascending=False).head(3)}')
+    print(f'dit zijn de grootste {nummer} partijen in {gemeente} van groot naar klein:{n_string}{gemeente_series.sort_values(ascending=False).head(nummer)}')
 
 
 def gemeente_checker(): #checkt of gemeente bestaat
@@ -77,14 +77,50 @@ def gemeente_checker(): #checkt of gemeente bestaat
 
 #print_stemmen()
 
+# gemeente invoeren; welke partijen hebben 0 stemmen. Welke partijen hebben geen stemdata.
+
+#gemeentechecker voor gemeenteinvoer
+
+def gemeente_bottom(gemeente):
+    gemeente_bottom = dtf[dtf['RegioNaam'] == gemeente]
+    gemeente_dtf = gemeente_bottom.iloc[:,10:46]
+    gemeente_series = gemeente_dtf.squeeze()
+    #print(gemeente_series)
+    for i, x in gemeente_series.iteritems():
+        if x == 0:
+            print(i)
+        elif math.isnan(x) == True:
+            print(i)
+    #n_string = '\n'
+    #print(f'dit zijn de grootste {nummer} partijen in {gemeente} van groot naar klein:{n_string}{gemeente_series.sort_values(ascending=False).head(nummer)}')
+
+
+
+# 3. alle gemeente met (letter) waarbij de grootste partij genoemd wordt.
+def gemeente_letter(): #checkt of gemeente bestaat
+    print("geef letters waarmee de gemeente naam begint ")
+    letter_invoer = input()
+    letter = letter_invoer.capitalize()
+    gemeente_namen = dtf.iloc[:, 0]
+    mogelijke_naam_gemeente = list(gemeente_namen)
+    lijstje_gemeente = [i for i in mogelijke_naam_gemeente if i.startswith(letter)]
+    for i in range(len(lijstje_gemeente)):
+        print(gemeente_top(lijstje_gemeente[i],1))
+
 def start():
     while True:
-        print("typ 1 om te zien in welke gemeente een ingevoerde partij stemmen heeft gehad \ntyp 2 om top 3 partijen met aantal stemmen per ingevoerde gemeente te zien")
+        print("typ 1 om te zien in welke gemeente een ingevoerde partij stemmen heeft gehad \ntyp 2 om top 3 partijen met aantal stemmen per ingevoerde gemeente te zien\nTyp 3 om alle gemeente met [letters] waarbij de grootste partij genoemd wordt.")
+        print("Typ 4 om een gemeente in te voeren en daarbij de partijen te laten zien die 0 of geen stem data hebben")
+        print("typ quit om te stoppen")
         invoer=input()
         if invoer == "1":
             print(f'{regio_codes(partij_checker())}')
         elif invoer == "2":
-            print(gemeente_top_3(gemeente_checker()))
+            print(gemeente_top(gemeente_checker(),3))
+        elif invoer == "3":
+            gemeente_letter()
+        elif invoer == "4":
+            gemeente_bottom(gemeente_checker())
         elif invoer == 'quit':
             print('programma gestopt')
             break
@@ -93,13 +129,7 @@ def start():
 
 start()
 
-# 3. alle gemeente met (letter) waarbij de partij die het grootste als eerst genoemd wordt
-def gemeente_letter(): #checkt of gemeente bestaat
-    print("geef letter waarmee de gemeente naam begint ")
-    
-    gemeente_namen = dtf.iloc[:, 0]
-    mogelijke_naam_gemeente = list(gemeente_namen)
-    gemeente for gemeente in mogelijke_naam_gemeente
+
 # 4. een overzicht per OudeRegioNaam met op STEDEN GESORTEERD met alleen de naam van de GROOTSTE PARTIJ per regionaam GEGROEPEERD op winnaar
 # 5. hoeveel procent een partij van de geldige stemmen in een regio gehaald heeft
 # 6. hoeveel procent de coalitie in handen heeft per stad
