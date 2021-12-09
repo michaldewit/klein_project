@@ -63,10 +63,49 @@ def top3_partijen_pergemeente(invoer2):
     return tekst2
 
 
+# voer een letter in, gemeentes die hiermee beginnen weergeven met de partij die het grootste is.
+
+def grootstepartij_pergemeente_letter():
+    print('Voer begin letter van een gemeente in:')
+    letter_input = input()
+    letter = letter_input.capitalize()
+    gemeente_namen = list(df.iloc[:, 0])
+    for i in gemeente_namen:
+        if i.startswith(letter):
+            print('De grootste partij in gemeente '+ i + ' is, met aantal stemmen:')
+            zoek_gemeente = (df[df['RegioNaam'] == i])
+            zoek_gemeente2 = zoek_gemeente.iloc[:, 10:]
+            serie = zoek_gemeente2.squeeze()
+            df6 = serie.sort_values(ascending=False)
+            print(df6.head(1))
+            print(' ')
+
+# gemeente invoeren; welke partijen hebben 0 stemmen. Welke partijen hebben geen stemdata.
+
+def nul_en_null_partijen_pergemeente(invoer2):
+    zoek_gemeente = (df[df['RegioNaam'] == invoer2])  #waar invoer gelijk is aan een veld in kolom regionaam
+    zoek_gemeente2 = zoek_gemeente.iloc[:,10:]
+    serie = zoek_gemeente2.squeeze()   #.squeeze maakt er een series van
+    print('Deze partijen hebben nul stemmen gekregen in ' +invoer2+ ':')
+    for i, x in serie.iteritems():
+        if x == 0:
+            print(i)
+    serie2 = serie.isna()
+    print('\nDeze partijen hebben geen stemdata in ' +invoer2+ ':')
+    for i, x in serie2.iteritems():
+        if x == True:
+            print(i)
+
+
+
+
 
 keuze_menu = ('\nKies 0 om te stoppen'
           '\nKies 1 om een partij in te voeren en te zien in hoeveel regiocodes deze partij stemmen heeft gehad'
-          '\nKies 2 om een gemeente in te voeren en de top 3 partijen te zien')
+          '\nKies 2 om een gemeente in te voeren en de top 3 partijen te zien'
+          '\nKies 3 om een begin letter van een gemeente in te voeren en de grootste partij in die gemeenten te zien'
+          '\nKies 4 om een gemeente in te voeren en te zien welke partijen hier 0 stemmen hebben '
+              'en welke partijen hier geen stemdata hebben')
 
 def start():
     print('Hier volgt een keuze menu' + keuze_menu)
@@ -79,6 +118,11 @@ def start():
         elif keuze == 0:
             print('programma sluit af')
             break
+        elif keuze == 3:
+            print(grootstepartij_pergemeente_letter())
+        elif keuze == 4:
+            print(nul_en_null_partijen_pergemeente(gemeente_checker()))
         else:
             print('maak een andere keuze'+keuze_menu)
-print(start())
+start()
+
